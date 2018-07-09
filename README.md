@@ -14,3 +14,6 @@ Keeps only mean and standard deviation variables for each measurement,
 Changes the names of the variables, 
 Create a tidy set with the average of each variable for each activity and each subject,
 Write the data set to the tidy_data.txt file.
+
+
+Make sure to run the script in the same direcotory where you performed the command "setwd("/your/project/path")
