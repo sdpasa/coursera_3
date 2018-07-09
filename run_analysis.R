@@ -8,29 +8,29 @@ filePath <- 'UCI HAR Dataset'
 if(!file.exists(filePath)) unzip(zipFile)
 
 # read training data
-training_subjects <- read.table(file.path(filePath, 'train', 'subject_train.txt'))
-training_values <- read.table(file.path(filePath, 'train', 'X_train.txt'))
-training_activity <- read.table(file.path(filePath, 'train', 'y_train.txt'))
+trainingSubjects <- read.table(file.path(filePath, 'train', 'subject_train.txt'))
+trainingValues <- read.table(file.path(filePath, 'train', 'X_train.txt'))
+trainingActivity <- read.table(file.path(filePath, 'train', 'y_train.txt'))
 
 # read test data
-test_subjects <- read.table(file.path(filePath, 'test', 'subject_test.txt'))
-test_values <- read.table(file.path(filePath, 'test', 'X_test.txt'))
-test_activity <- read.table(file.path(filePath, 'test', 'y_test.txt'))
+testSubjects <- read.table(file.path(filePath, 'test', 'subject_test.txt'))
+testValues <- read.table(file.path(filePath, 'test', 'X_test.txt'))
+testActivity <- read.table(file.path(filePath, 'test', 'y_test.txt'))
 
 features <- read.table(file.path(filePath, 'features.txt'), as.is = TRUE)
 activities <- read.table(file.path(filePath, 'activity_labels.txt'))
 colnames(activities) <- c('id', 'label')
 
 # Task 1: Merges the training and the test sets to create one data set.
-complete_activity <- bind_rows(bind_cols(training_subjects,training_values,training_activity),
-                               bind_cols(test_subjects,test_values,test_activity))
+mergedResults <- bind_rows(bind_cols(trainingSubjects,trainingValues,trainingActivity),
+                           bind_cols(testSubjects,testValues,testActivity))
 
-names(complete_activity)
-colnames(complete_activity) <- c('subject', features[, 2], 'activity')
+names(mergedResults)
+colnames(mergedResults) <- c('subject', features[, 2], 'activity')
 
 # Task 2: Extracts only the measurements on the mean and standard deviation for each measurement.
-measurements <- grepl('subject|activity|mean|std', colnames(complete_activity))
-activity_measurements <- complete_activity[, measurements]
+measurements <- grepl('subject|activity|mean|std', colnames(mergedResults))
+activity_measurements <- mergedResults[, measurements]
 
 # Task 3: Uses descriptive activity names to name the activities in the data set
 activity_measurements$activity <- factor(activity_measurements$activity, 
@@ -38,22 +38,22 @@ activity_measurements$activity <- factor(activity_measurements$activity,
                                          labels = activities[, 2])
 
 # Task 4: Appropriately labels the data set with descriptive variable names. 
-column_names <- colnames(activity_measurements)
-column_names <- gsub('[\\(\\)-]', '', column_names)
-column_names <- gsub('^f', 'frequencyDomain', column_names)
-column_names <- gsub('BodyBody', 'Body', column_names)
-column_names <- gsub('^t', 'timeDomain', column_names)
-column_names <- gsub('Acc', 'Accelerometer', column_names)
-column_names <- gsub('Gyro', 'Gyroscope', column_names)
-column_names <- gsub('Freq', 'Frequency', column_names)
-column_names <- gsub('Mag', 'Magnitude', column_names)
-column_names <- gsub('mean', 'Mean', column_names)
-column_names <- gsub('std', 'StandardDeviation', column_names)
+columnNames <- colnames(activity_measurements)
+columnNames <- gsub('[\\(\\)-]', '', columnNames)
+columnNames <- gsub('^f', 'frequencyDomain', columnNames)
+columnNames <- gsub('BodyBody', 'Body', columnNames)
+columnNames <- gsub('^t', 'timeDomain', columnNames)
+columnNames <- gsub('Acc', 'Accelerometer', columnNames)
+columnNames <- gsub('Gyro', 'Gyroscope', columnNames)
+columnNames <- gsub('Freq', 'Frequency', columnNames)
+columnNames <- gsub('Mag', 'Magnitude', columnNames)
+columnNames <- gsub('mean', 'Mean', columnNames)
+columnNames <- gsub('std', 'StandardDeviation', columnNames)
 
-print(column_names)
+print(columnNames)
 
 #changes names
-colnames(activity_measurements) <- column_names
+colnames(activity_measurements) <- columnNames
 
 # Task 5: From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 activity_subject <- activity_measurements %>% 
