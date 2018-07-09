@@ -21,23 +21,23 @@ features <- read.table(file.path(filePath, 'features.txt'), as.is = TRUE)
 activities <- read.table(file.path(filePath, 'activity_labels.txt'))
 colnames(activities) <- c('id', 'label')
 
-# 1. Merge
+# Task 1: Merges the training and the test sets to create one data set.
 complete_activity <- bind_rows(bind_cols(training_subjects,training_values,training_activity),
                                bind_cols(test_subjects,test_values,test_activity))
 
 names(complete_activity)
 colnames(complete_activity) <- c('subject', features[, 2], 'activity')
 
-# 2. Extracts only the measurements on the mean and standard deviation for each measurement
+# Task 2: Extracts only the measurements on the mean and standard deviation for each measurement.
 measurements <- grepl('subject|activity|mean|std', colnames(complete_activity))
 activity_measurements <- complete_activity[, measurements]
 
-# 3. Use descriptive activity names to name the activities in the data set
+# Task 3: Uses descriptive activity names to name the activities in the data set
 activity_measurements$activity <- factor(activity_measurements$activity, 
                                          levels = activities[, 1], 
                                          labels = activities[, 2])
 
-# 4. label dataset 
+# Task 4: Appropriately labels the data set with descriptive variable names. 
 column_names <- colnames(activity_measurements)
 column_names <- gsub('[\\(\\)-]', '', column_names)
 column_names <- gsub('^f', 'frequencyDomain', column_names)
@@ -55,7 +55,7 @@ print(column_names)
 #changes names
 colnames(activity_measurements) <- column_names
 
-# 5. create a second, independent tidy data set with the average of  each variable for each activity and each subject.
+# Task 5: From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 activity_subject <- activity_measurements %>% 
     group_by(subject, activity) %>%
     summarise_all(funs(mean))
